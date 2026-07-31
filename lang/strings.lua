@@ -39,7 +39,7 @@ return {
   ["%s\ncan't move!"] = "%s\nnão pode se mexer!",
   ["%s\nflinched!"] = "%s\nvacilou!",
   ["It hurt itself in\nits confusion!"] = "Feriu-se com a\nprópria confusão!",
-  ["%s\nused %s!"] = "%s\nusou %s!",
+  ["%s\nused %s!"] = "%s usou\n%s!",
   ["%s\nis charging up!"] = "%s\nestá carregando!",
   ["%s's\nattack missed!"] = "%s\nerrou o ataque!",
   ["%s's\nattack continues!"] = "%s\nsegue atacando!",
