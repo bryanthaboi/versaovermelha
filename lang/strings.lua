@@ -4,6 +4,9 @@
 -- an entry empty. Keep any %s / %d directives.
 
 return {
+  ["lower case"] = "minúsculas",
+  ["UPPER CASE"] = "MAIÚSCULAS", 
+  ["ED"] = "OK",
   ["%s\nflew up high!"] = "%s\nvoou bem alto!",
   ["%s\ndug a hole!"] = "%s\ncavou um buraco!",
   ["%s\nmade a whirlwind!"] = "%s\nfez um redemoinho!",
