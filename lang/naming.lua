@@ -5,21 +5,23 @@
 -- maps, so a multi-byte character is one cell.  The row holding a single
 -- "lower case" / "UPPER CASE" cell is the case switch, and the cell
 -- spelled "ED" is the confirm.
-return {
-  upper = {
+--return {
+--  upper = {
  --   { "A", "B", "C", "D", "E", "F", "G", "H", "I" },
  --   { "J", "K", "L", "M", "N", "O", "P", "Q", "R" },
  --   { "S", "T", "U", "V", "W", "X", "Y", "Z", " " },
  --   { "×", "(", ")", ":", ";", "[", "]", "<PK>", "<MN>" },
  --   { "-", "?", "!", "♂", "♀", "/", ".", ",", "FIM" },
  --   { "minúsculas" },
-  },
-  lower = {
+--  },
+--  lower = {
   --  { "a", "b", "c", "d", "e", "f", "g", "h", "i" },
   --  { "j", "k", "l", "m", "n", "o", "p", "q", "r" },
   --  { "s", "t", "u", "v", "w", "x", "y", "z", " " },
   --  { "×", "(", ")", ":", ";", "[", "]", "<PK>", "<MN>" },
   --  { "-", "?", "!", "♂", "♀", "/", ".", ",", "FIM" },
   --  { "MAIÚSCULAS" },
-  },
-}
+--  },
+--}
+--this whole thing is bugged and doesn't allow the lower case to work, so i removed it all. 
+-- Regular strings replacement work for replaced "lower case/UPPER CASE/ED" entries
