@@ -115,6 +115,20 @@ return function(mod)
     -------------------------------------------------------------------------
   -- Battle UI
   -------------------------------------------------------------------------
+local function displayName(b)
+  return b.isPlayer and b.name or ("" .. b.name)
+end
+
+-- Apply the "Enemy " prefix to a pre-built message from a module that
+-- only knows the raw nickname (Status.beforeMove/residual,
+-- TrainerAI.useItem): splice it in before the first name occurrence.
+local function prefixEnemy(msg, battler)
+  if battler.isPlayer then return msg end
+  local s = msg:find(battler.name, 1, true)
+  if not s then return msg end
+  return msg:sub(1, s - 1) .. "" .. msg:sub(s)
+end
+
 
   BattleState.drawTextArea = function(self)
 
@@ -164,7 +178,7 @@ function BattleState:drawTextArea()
       -- SAFARI_BATTLE_MENU_TEMPLATE: full-width box, "BALLx  BAIT /
       -- THROW ROCK  RUN" from (2,14)
       Font.drawBox(0, 12, 20, 6)
-      Font.draw(Strings("BOLAx"), 16, 112); Font.draw(Strings("ISCA"), 112, 112)
+      Font.draw(Strings("BOLA SAFÁRI"), 16, 112); Font.draw(Strings("ISCA"), 112, 112)
       Font.draw(Strings("JOGAR PEDRA"), 16, 128); Font.draw(Strings("FUGIR"), 112, 128)
       Font.drawCode(0xED, (col == 0 and 8 or 104), 112 + row * 16)
     else
