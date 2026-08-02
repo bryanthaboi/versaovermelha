@@ -11,13 +11,7 @@ return {
   ["DEFENSE"] = "DEFESA", 
   ["SPEED"] = "VELOCID.", 
   ["SPECIAL"] = "ESPECIAL", 
-  ["ACCURACY"] = "PONTARIA",
-  ["EVASION"] = "EVASÃO",
-  
-  
-  
-  ["MOUSE"] = "RATO",
-  
+   
   ["NORMAL"] = "NORMAL",
   ["FIGHTING"] = "LUTADOR",
   ["FLYING"] = "VOADOR",
@@ -36,10 +30,7 @@ return {
   ["DRAGON"] = "DRAGÃO",
  -- ["STEEL"] = "AÇO",
  -- ["DARK"] = "NOTURNO",
-
-
-
-
+  ["PSN"] = "VENENADO",
 
   ["PARTY (DEPOSIT)"] = "EQUIPE (DEPOSITAR)",
   ["DEPOSIT"] = "DEPOSITAR",
@@ -137,7 +128,7 @@ return {
   ["BALLx"] = "BOLAx",
   ["BAIT"] = "ISCA",
   ["THROW ROCK"] = "JOGAR PEDRA",
-  ["disabled!"] = "inabilitado!",
+  ["disabled!"] = "inativado!",
   ["TYPE/"] = "TIPO/",
   ["It doesn't affect\n%s!"] = "Não afeta\n%s!",
   ["Critical hit!"] = "Ataque Crítico!",
@@ -350,7 +341,7 @@ return {
   ["POKéDEX"] = "",
   ["POKéMON"] = "",
   ["SAVE"] = "SALVAR",
-  ["PLAYER %s\nBADGES    %d\nPOKéDEX %3d\nTIME %6d:%02d"] = "JOGADOR %s\nINSÍGNIAS %d\nPOKéDEX %3d\nTEMPO %6d:%02d",
+  ["PLAYER %s\nBADGES    %d\nPOKéDEX %3d\nTIME %6d:%02d"] = "NOME   %s\nINSÍGNIAS %d\nPOKéDEX %3d\nTEMPO %6d:%02d",
   ["\fWould you like to\nSAVE the game?"] = "\fGostaria de\nSALVAR o jogo?",
   ["Now saving..."] = "Salvando...",
   ["%s saved\nthe game!"] = "%s salvou\no jogo!",
@@ -360,7 +351,7 @@ return {
   ["BALL"] = "BOLA",
   ["STATUS/"] = "ESTADO/",
   ["IDNo/"] = "Nº.ID/",
-  ["OT/"] = "TO",
+  ["OT/"] = "TO/",
   ["EXP POINTS"] = "Pts de EXP.",
   ["LEVEL UP"]   = "Próx. Nv:",
   ["PP"] = "",
@@ -412,9 +403,12 @@ return {
   ["{RAM:wNameBuffer} hacked\naway with CUT!"] = "{RAM:wNameBuffer} cortou\no arbusto!",
   ["Gyaoo!"] = "",
   ["Hi there!\nMay I help you?"] = "Olá! Como posso\nte ajudar?",
-  ["SOMEONE'S PC"] = "PC DE ALGUÉM",
-  ["{PLAYER}'s PC"] = "PC DE {PLAYER}",
-  ["PROF.OAK's PC"] = "PC DO CARVALHO",
+  ["SOMEONE'S PC"] = "PC de ALGUÉM",
+  ["'s PC"] = "/Meu PC",
+  ["Bill's PC"] = "PC do BILL",
+  ["WITHDRAW"] = "RETIRAR",
+  ["DEPOSIT"] = "GUARDAR",
+  ["PROF.OAK's PC"] = "PC do CARVALHO",
   ["POKéDEX comp-\nletion is:\f{NUM:hDexRatingNumMonsSeen} POKéMON seen\n{NUM:hDexRatingNumMonsOwned} POKéMON owned\fPROF.OAK's\nRating:"] = "Progresso da sua\nPOKéDEX é:\f{NUM:hDexRatingNumMonsSeen} POKéMON vistos\n{NUM:hDexRatingNumMonsOwned} POKéMON pegos\fAvaliação do\nPROF.CARVALHO:",
   ["We hope to see\nyou again!"] = "Obrigada! E volte\nquando precisar!",
   ["Welcome to our\nPOKéMON CENTER!"] = "Bem-vindo ao nosso\nCENTRO POKéMON!",
