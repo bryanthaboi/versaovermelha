@@ -4,19 +4,8 @@
 
 -- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
 -- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
--- From the ROM, and wider than Red's 3 glyphs -- worth a look at the battle HUD.
+
+
 return {
   ["BRN"] = "QUEI",
   ["FRZ"] = "CONG",
@@ -24,3 +13,4 @@ return {
   ["PSN"] = "ENVE",
   ["SLP"] = "DORM",
 }
+-- doesn't actually works thou
