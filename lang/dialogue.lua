@@ -1979,7 +1979,7 @@ return {
   ["_SSAnneKitchenCook7MainCourseIsText"] = "Er-hem! Oui eu\nsou le CHEF!\fLe prato principal\nde hoje é...",
   ["_SSTicketNoRoomText"] = "Você já está cheio\nde coisas, amigão!",
   ["_SSTicketReceivedText"] = "{PLAYER} recebeu o\n{RAM:wStringBuffer}!",
-  ["_SafariZoneAngryText"] = "{RAM:wNameBuffer} ficou\nnvern",
+  ["_SafariZoneAngryText"] = "{RAM:wNameBuffer} se\nirritou.",
   ["_SafariZoneCenterRestHouseGirlText"] = "SARA: Pra onde\nmeu namorado,\vERIK, foi?",
   ["_SafariZoneCenterRestHouseScientistText"] = "Vim pegar POKéMON\npara dar de pre-\vsente em casa!",
   ["_SafariZoneCenterRestHouseSignText"] = "CASA DE\nDESCANSO",
