@@ -316,7 +316,7 @@ return {
   ["DEPOSIT ITEM"] = "DEPOSITAR ITEM",
   ["TOSS ITEM"] = "DESCARTAR ITEM",
   ["LOG OFF"] = "DESLIGAR",
-  ["SEEN %d  OWNED %d"] = "VIU:%d  PEGOU:%d",
+  ["SEEN %3d  OWN %3d"] = "VIU:%3d  PEGOU:%3d",
   ["DATA"] = "DADOS",
   ["CRY"] = "GRITO",
   ["AREA"] = "ÁREA",
