@@ -13,6 +13,7 @@ local Font = require("src.render.Font")
 local Strings = require("src.core.Strings")
 local TypeChart = require("src.battle.TypeChart")
 
+
 return function(mod)
   -- mod:read is the supported way into your own directory; the catalogs are
   -- plain Lua tables, so read and run them rather than require()ing them.
@@ -60,6 +61,7 @@ return function(mod)
       page.image = mod.assets:path(page.image)
     end
     mod.content.font:register(id, page)
+	--mod.content.font:register("ttf", {})
   end
   -- charmap: which byte sequence draws which code
   for seq, code in pairs(catalog("charmap")) do
@@ -221,7 +223,7 @@ function BattleState:drawTextArea()
     Font.drawCode((self.moveSwapIndex == self.moveIndex) and 0xEC or 0xED,
                   08, 96 + self.moveIndex * 8)
     if self.moveSwapIndex and self.moveSwapIndex ~= self.moveIndex then
-      Font.drawCode(0xEC, 40, 96 + self.moveSwapIndex * 8)
+      Font.drawCode(0xEC, 08, 96 + self.moveSwapIndex * 8)
     end
     local sel = self.player.curMoves[self.moveIndex]
     if sel then
@@ -241,7 +243,7 @@ function BattleState:drawTextArea()
     -- Mimic's copy menu (MoveSelectionMenu .mimicmenu, core.asm:
     -- 2506-2517): the enemy's move list in a 16x6 box at (0,7), names
     -- single-spaced from (2,8), cursor at column 1
-    Font.drawBox(0, 7, 16, 6)
+    Font.drawBox(0, 7, 20, 6)
     love.graphics.setColor(0, 0, 0, 1)
     for i, m in ipairs(self.mimicMoves) do
       Font.draw(self.data.moves[m.id].name, 16, (7 + i) * 8)
@@ -252,7 +254,14 @@ end
 
   end
   
-  
+  local literal_body = mod:read("lang/literal_handlers.lua")
+  if literal_body then
+    local chunk, err = loadstring(literal_body, "lang/literal_handlers.lua")
+    if not chunk then error(err) end
+    local setup = chunk()
+    if type(setup) ~= "function" then error("literal_handlers.lua must return a function") end
+    setup(mod)
+  end
   
   
   
