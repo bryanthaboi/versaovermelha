@@ -13,6 +13,7 @@ local Font = require("src.render.Font")
 local Strings = require("src.core.Strings")
 local TypeChart = require("src.battle.TypeChart")
 
+
 return function(mod)
   -- mod:read is the supported way into your own directory; the catalogs are
   -- plain Lua tables, so read and run them rather than require()ing them.
@@ -252,7 +253,14 @@ end
 
   end
   
-  
+  local literal_body = mod:read("lang/literal_handlers.lua")
+  if literal_body then
+    local chunk, err = loadstring(literal_body, "lang/literal_handlers.lua")
+    if not chunk then error(err) end
+    local setup = chunk()
+    if type(setup) ~= "function" then error("literal_handlers.lua must return a function") end
+    setup(mod)
+  end
   
   
   
