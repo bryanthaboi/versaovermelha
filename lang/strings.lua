@@ -149,6 +149,7 @@ return {
   ["%s gained\na boosted\v%d EXP. Points!"] = "%s ganhou\num bônus de EXP.,\v%d Pts. de EXP.!",
   ["%s grew\nto level %d!"] = "%s subiu\npara o nível %d!",
   ["%s is\nabout to use"] = "%s está\nprestes a usar",
+  ["%s is\nabout to use\v%s!"] = "%s está\nprestes a usar\v%s!",
   ["%s!"] = "%s!",
   ["Will %s\nchange POKéMON?"] = "%s vai\ntrocar de POKéMON?",
   ["%s defeated\n%s!"] = "%s derrotou\n%s!",
