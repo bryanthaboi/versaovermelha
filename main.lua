@@ -15,7 +15,8 @@ local TypeChart = require("src.battle.TypeChart")
 local ListMenu = require("src.ui.ListMenu")
 local MoveLearnMenu = require("src.ui.MoveLearnMenu")
 local Theme = require("src.ui.Theme")
-
+local TrainerCard = require("src.ui.TrainerCard")
+local Badges = require("src.inventory.Badges")
 
 return function(mod)
   -- mod:read is the supported way into your own directory; the catalogs are
@@ -375,7 +376,65 @@ function MoveLearnMenu:draw()
 end
 
 
+-- reorganizar Trainer Card
 
+local oldDraw = TrainerCard.draw
+function TrainerCard:draw()
+  love.graphics.setColor(1, 1, 1, 1)
+  love.graphics.rectangle("fill", 0, 0, 160, 144)
+  local save = self.game.save
+
+  -- top card (rows 0-7): NAME / MONEY / TIME, pic upper-right
+  self:frameBox(0, 0, 20, 8)
+  if self.pic then
+    love.graphics.draw(self.pic, 104, 4)
+  end
+  love.graphics.setColor(0, 0, 0, 1)
+  Font.draw(Strings("NAME/%s", save.player.name or "RED"), 16, 12)
+  Font.draw(Strings("DINHEIRO/"), 16, 25)
+  Font.draw(("¥%d"):format(save.money or 0), 48, 33)
+
+  local t = math.floor(save.playTime or 0)
+  Font.draw(Strings("TEMPO/"), 16, 42)
+
+  Font.draw(("%3d:%02d"):format(
+    math.floor(t / 3600),
+    math.floor(t / 60) % 60
+), 48, 50)
+
+  -- the circle-dotted BADGES banner (TrainerInfo_BadgesText)
+  self:frameBox(0, 8, 20, 3)
+  love.graphics.setColor(0, 0, 0, 1)
+  Font.draw(Strings("BADGES"), 40, 73)
+  if self.circle then
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(self.circle, 32, 72)
+    love.graphics.draw(self.circle, 112, 72)
+    love.graphics.setColor(0, 0, 0, 1)
+  end
+
+
+ -- numbered badge grid (rows 11-17): face by default, badge when owned
+  self:frameBox(0, 11, 20, 7)
+  local badges = Badges.list(self.game.data)
+  for i = 1, #badges do
+    local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
+    local tx, ty = 16 + col * 32, 95 + row * 22
+    -- the extracted sheets cover the eight Kanto slots; a longer badge
+    -- list draws its extra entries unnumbered rather than crashing
+    if self.nums and self.nums.quads[i - 1] then
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(self.nums.img, self.nums.quads[i - 1], tx, ty)
+    end
+    if self.faces and self.faces.quads[i - 1] then
+      love.graphics.setColor(1, 1, 1, 1)
+      local owned = save.inventory[Badges.itemFor(badges[i])]
+      local sheet = owned and self.badges or self.faces
+      love.graphics.draw(sheet.img, sheet.quads[i - 1], tx + 8, ty + 2)
+    end
+  end
+  love.graphics.setColor(1, 1, 1, 1)
+end
 
 
 end
