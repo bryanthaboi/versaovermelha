@@ -12,6 +12,9 @@ local BattleState = require("src.battle.BattleState")
 local Font = require("src.render.Font")
 local Strings = require("src.core.Strings")
 local TypeChart = require("src.battle.TypeChart")
+local ListMenu = require("src.ui.ListMenu")
+local MoveLearnMenu = require("src.ui.MoveLearnMenu")
+local Theme = require("src.ui.Theme")
 
 
 return function(mod)
@@ -262,8 +265,117 @@ end
     if type(setup) ~= "function" then error("literal_handlers.lua must return a function") end
     setup(mod)
   end
+
+
+--substitui a função para alterar o alinhamento dos preços/qtds do inventário e lojas  
+
+
+function ListMenu:draw() 
+  love.graphics.setColor(1, 1, 1, 1)
+  love.graphics.rectangle("fill", 0, 0, 160, 144)
+  love.graphics.setColor(0, 0, 0, 1)
+  Font.draw(Strings(self.title), 8, 4)
+  if #self.items == 0 then
+    Font.draw(Strings("Nothing here."), 16, 64)
+  end
+  for row = 1, self.rows do
+    local i = self.scroll + row
+    local item = self.items[i]
+    if not item then break end
+    local y = 8 + row * 16
+    Font.draw(item.label, 16, y)
+    if item.ball then -- the Pokédex owned-ball marker tile
+      -- one blank glyph after the name, measured in glyph advances rather
+      -- than bytes: NIDORAN♂/♀ carry a multi-byte charmap entry, so
+      -- `#item.label` overcounted by 2 and pushed their ball 16px right (#285)
+      local bx = 16 + Font.width(item.label) + 8 + 3
+      local by = y + 3
+      love.graphics.circle("fill", bx, by, 3.5)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.rectangle("fill", bx - 3.5, by - 0.5, 7, 1)
+      love.graphics.circle("fill", bx, by, 1.2)
+      love.graphics.setColor(0, 0, 0, 1)
+    end
+    if item.right then
+      Font.draw(item.right, 160 - 8 - Font.width(item.right), y + 8)
+    end
+    if i == self.index then
+      -- hollowIndex: a chosen row keeps the hollow '▷' left behind by
+      -- pokered's PlaceUnfilledArrowMenuCursor (the old man demo's
+      -- auto A-press, home/list_menu.asm:89-91)
+      Font.drawCode((self.swapIndex == i or self.hollowIndex == i)
+                    and Theme.cursorHollow or Theme.cursor, 8, y)
+    end
+    if self.swapIndex == i and i ~= self.index then
+      Font.drawCode(Theme.cursorHollow, 8, y) -- ▷ marks the item being moved
+    end
+  end
+  if self.dialogue then
+    -- money box (DisplayTextBoxID MONEY_BOX, hlcoord 11,0): the amount
+    -- right-aligned on its middle row
+    Font.drawBox(11, 0, 9, 3)
+    love.graphics.setColor(0, 0, 0, 1)
+    local money = ("¥%d"):format(self.money and self.money() or 0)
+    Font.draw(money, 152 - Font.width(money), 8)
+  end
+  if self.dialogue or (self.messageBox and self.footer) then
+    -- standard bottom text box (PrintText); long prompts wrap and keep
+    -- their last two lines, like the GB's scrolled box (#115/#174)
+    Font.drawBox(0, 12, 20, 6)
+    love.graphics.setColor(0, 0, 0, 1)
+    if self.footer then
+      local flat = {}
+      for _, page in ipairs(require("src.render.TextBox").paginate(self.footer)) do
+        for _, line in ipairs(page) do flat[#flat + 1] = line end
+      end
+      local y = 112
+      for i = math.max(1, #flat - 1), #flat do
+        Font.draw(flat[i], 8, y)
+        y = y + 16
+      end
+    end
+  elseif self.footer then
+    -- bare footer (bag money line, etc.)
+    local flat = {}
+    for _, page in ipairs(require("src.render.TextBox").paginate(self.footer)) do
+      for _, line in ipairs(page) do flat[#flat + 1] = line end
+    end
+    local y = (#flat >= 2) and 120 or 136
+    for i = math.max(1, #flat - 1), #flat do
+      Font.draw(flat[i], 8, y)
+      y = y + 16
+    end
+  end
+  love.graphics.setColor(1, 1, 1, 1)
   
   
-  
-  
+end
+
+
+--reposiciona o menu de apredizado de golpes novos
+
+ local CURSOR = 0xED
+
+function MoveLearnMenu:draw()
+  if not self.selecting then return end
+  -- single-spaced move list box (TryingToLearn: TextBoxBorder at 4,7)
+  -- plus the port's extra CANCEL row
+  Font.drawBox(0, 5, 20, 7)
+  love.graphics.setColor(0, 0, 0, 1)
+  for i, mv in ipairs(self.mon.moves) do
+    Font.draw(self.game.data.moves[mv.id].name, 16, (5 + i) * 8)
+  end
+  Font.draw(Strings("CANCEL"), 16, (6 + #self.mon.moves) * 8)
+  Font.drawCode(CURSOR, 08, (5 + self.index) * 8)
+  -- WhichMoveToForgetText in the bottom dialogue box
+  Font.drawBox(0, 12, 20, 6)
+  Font.draw(Strings("Which move should"), 8, 14 * 8)
+  Font.draw(Strings("be forgotten?"), 8, 16 * 8)
+  love.graphics.setColor(1, 1, 1, 1)
+end
+
+
+
+
+
 end
