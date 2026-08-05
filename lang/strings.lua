@@ -449,7 +449,7 @@ return {
   ["You can't carry\nany more items."] = "Sua mochila não\ncabe mais itens.",
   ["Withdrew\n%s."] = "Retirou\n%s.",
   ["No room left to\nstore items."] = "Sem espaço para\narmazenar itens.",
-  ["%s was\nstored via PC."] = "%s foi\narmazenado no PC.",
+  ["%s was\nstored via PC."] = "Depositou\n%s.",
   ["Toss %s?"] = "Jogar fora %s?",
   ["Threw away %s."] = "Jogou fora\n%s.",
   ["How many?"] = "Quantos?",
