@@ -32,6 +32,7 @@ return {
   ["DRAGON"] = "DRAGÃO",
   ["STEEL"] = "AÇO",
   ["DARK"] = "NOTURNO",
+  ["FAIRY"] = "FADA",
 
 
 
@@ -84,7 +85,18 @@ return {
   ["INDIGO PLATEAU"] = "PLANALTO INDIGO",
   ["POWER PLANT"] = "USINA ELÉTRICA",
 
+  ["BICYCLE"] = "BICICLETA",
 
+
+  ["OAK: It's unsafe!\nWild POKéMON\nlive in tall grass!"] = "",
+  ["OAK: Here, come with\nme!"] = "",
+  ["OAK: Whew..."] = "",
+  ["OAK: That was\nclose!\fWild POKéMON live\nin tall grass!"] = "",
+  ["OAK: Hey! Wait!\nDon't go out!"] = "",
+  ["OAK: Look, {PLAYER}! Do\nyou see that ball\non the table?"] = "",
+
+
+  ["NO THANKS"] = "SAIR",
   ["'s NEST"] = " VIVE EM:",
   [" AREA UNKNOWN"] = ": NÃO HÁ!",
   ["AREA UNKNOWN"] = "ÁREA DESCONHECIDA",
@@ -120,7 +132,7 @@ return {
   ["The move is\ndisabled!"] = "Esse golpe está\ninabilitado!",
   ["No PP left for\nthis move!"] = "Sem PP sobrando\npara esse golpe!",
   ["But, it failed!"] = "Sem efeito!",
-  ["%s\nlearned\n%s!"] = "%s\naprendeu\n%s!",
+  ["%s\nlearned\n%s!"] = "%s aprendeu\n%s!",
   ["POKé BALL"] = "POKé BOLA",
   ["OLD MAN used\nPOKé BALL!"] = "VELHO usou\nPOKé BOLA!",
   ["All right!\n%s was\ncaught!"] = "É isso aí!\n%s foi\vcapturado!",
