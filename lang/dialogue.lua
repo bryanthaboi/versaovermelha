@@ -3,6 +3,33 @@
 -- Keyed by the original text label. The English is in the comment.
 
 return {
+-- bola do yellow oakslab
+-- rival i'll get a better pokemon~ 
+  ["_OaksLabRivalIllGetABetterPokemonThanYou"] = "{RIVAL}: Humph!\nEu vou ganhar um\vPOKéMON melhor\vque o seu!",
+  ["_OaksLabPikachuText"] = "CARVALHO: Vá em frente, é seu!",
+--rival no way I want that one
+
+
+
+  ["_PalletTownOakComeWithMe"] = "Aqui, venha comigo!",
+  ["_PalletTownOakWhewText"] = "Ufa...",
+  ["_PalletTownOakThatWasCloseText"] = "Essa foi por pouco!\vPOKéMON selvagens\vvivem na grama\valta!",
+  --["OAK: Look, {PLAYER}! Do\nyou see that ball\non the table?"] = "Olhe, {PLAYER}! Vê\nessa bola na mesa?",
+  ["_OaksLabChooseMonText"] = "CARVALHO: Hã?\n{RIVAL}?\vPor que você já\vestá aqui?\fEu pedi que viesse mais tarde...\fBom, que seja!\nApenas espere um\vpouco aí mesmo.\fOlhe, {PLAYER}!\nVê aquela bola\vali na mesa?\fEla é chamada de\nPOKé BOLA. Ela\vcontém um POKéMON\vdentro dela.\fVocê pode ficar\ncom ela!\vVá em frente,\vpegue-a!",
+	
+  ["_OaksLabThatsAPokeball"] = "Isso é uma POKéBOLA!",
+  ["_OaksLabOak1GoAheadItsYours"] = "Vá em frente, é seu!",
+  ["_OaksLabRivalTakesText1"] = "{RIVAL}: Mas não mesmo!\v{PLAYER}, eu quero\vesse POKéMON!",
+  ["_OaksLabRivalTakesText2"] = "{RIVAL} pegou o POKéMON!",
+  ["_OaksLabRivalTakesText3"] = "CARVALHO: {RIVAL}!\fO que você está fazendo?",
+  ["_OaksLabRivalTakesText4"] = "{RIVAL}: Vovô, eu quero esse daqui!",
+  ["_OaksLabRivalTakesText5"] = "CARVALHO: Mas\neu... Ah, tudo\vbem, então.\vPode ficar com\vesse POKéMON.\fEu já ia te dar um mesmo...\f{PLAYER}, venha aqui.",
+  ["_OaksLabOakGivesText"] = "CARVALHO: {PLAYER},\nesse é o POKéMON\vque eu capturei\vagora há pouco.\fVocê pode ficar com ele.\vEu o capturei\vselvagem, então\vainda não está\vadestrado.",
+  ["_OaksLabReceivedText"] = "{PLAYER} recebeu um {RAM:wNameBuffer}!",
+  ["_OaksLabPikachuDislikesPokeballsText1"] = "CARVALHO: O quê?",
+  ["_OaksLabPikachuDislikesPokeballsText2"] = "CARVALHO: Olha só isso!\fÉ estranho, mas\nparece que o seu\vPIKACHU não gosta\vde POKé BOLAs.\fMantenha ele perto de você.\fIsso vai fazer ele ficar mais feliz!\fVocê pode falar\ncom ele e ver\vcomo ele se sente\va seu respeito.",
+  ["_OaksLabOak1YouShouldTalkToIt"] = "CARVALHO: Você\ndevia falar com\vele para ver como\vse sente.",
+
 ["_MtMoonJessieJamesText1"] = "Pare aí mesmo!",
 ["_MtMoonJessieJamesText2"] = "Esse fóssil é da\nEQUIPE ROCKET!\fRenda-se agora,\nou prepare-se\vpara lutar!",
 ["_MtMoonJessieJamesText3"] = "Um pirra-\nlho nos derrotou?",
