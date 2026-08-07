@@ -2,21 +2,42 @@
 --
 -- Keyed by the original text label. The English is in the comment.
 
+--to do: 
+--professor in yellow is saying theres 3 pokeballs in the table
+--Lapras boy untranslated
+--Oh, you're not
+--You should take a quick nap
+--It will whisk you\nback --safron pidgey
+--enfermeira silphco9 - 3text
+
+
+
 return {
--- bola do yellow oakslab
--- rival i'll get a better pokemon~ 
+
+  ["_SilphCo9FNurseText"] = "Não desista!",
+  ["_SilphCo9FNurseYouLookTiredText"] = "Você parece estar\ncansado! Eu acho\vque você deveria\vtirar um cochilo!",
+  ["_SilphCo9FNurseText2"] = "Muitíssimo obrigada!",
+ 
+  ["_MrPsychicsHouseMrPsychicNoMoreText"] = "...Aumm...",
+  ["_MrPsychicsHouseMrPsychicText"] = "...Espere! não diga uma palavra!\fVocê queria isso!",
+ 
+ ["_SilphCo2FSilphWorkerFPleaseTakeThisText"] = "Aaahhh!\nNão! Pare! Ajuda!\fAh, você não é da EQUIPE ROCKET.\vEu pensei...\vMe perdoe. Aqui,\vfique com isso!",
+ ["SilphCo2FSilphWorkerFPleaseTakeThisText"] = "Uaahhh!\nNão! Pare! Ajuda!\fAh, você não é da EQUIPE ROCKET.\vEu pensei...\vMe perdoe. Aqui,\vfique com isso!",
+
+ ["_MrPsychicsHouseMrPsychicReceivedTM29Text"] = "",
+ ["_MrPsychicsHouseMrPsychicTM29ExplanationText"] = "",
+ ["_MrPsychicsHouseMrPsychicTM29NoRoomText"] = "",
+ ["_MrPsychicsHouseMrPsychicYouWantedThisText"] = "",
+ 
+ 
+ 
   ["_OaksLabRivalIllGetABetterPokemonThanYou"] = "{RIVAL}: Humph!\nEu vou ganhar um\vPOKéMON melhor\vque o seu!",
   ["_OaksLabPikachuText"] = "CARVALHO: Vá em frente, é seu!",
---rival no way I want that one
-
-
-
   ["_PalletTownOakComeWithMe"] = "Aqui, venha comigo!",
   ["_PalletTownOakWhewText"] = "Ufa...",
   ["_PalletTownOakThatWasCloseText"] = "Essa foi por pouco!\vPOKéMON selvagens\vvivem na grama\valta!",
   --["OAK: Look, {PLAYER}! Do\nyou see that ball\non the table?"] = "Olhe, {PLAYER}! Vê\nessa bola na mesa?",
   ["_OaksLabChooseMonText"] = "CARVALHO: Hã?\n{RIVAL}?\vPor que você já\vestá aqui?\fEu pedi que viesse mais tarde...\fBom, que seja!\nApenas espere um\vpouco aí mesmo.\fOlhe, {PLAYER}!\nVê aquela bola\vali na mesa?\fEla é chamada de\nPOKé BOLA. Ela\vcontém um POKéMON\vdentro dela.\fVocê pode ficar\ncom ela!\vVá em frente,\vpegue-a!",
-	
   ["_OaksLabThatsAPokeball"] = "Isso é uma POKéBOLA!",
   ["_OaksLabOak1GoAheadItsYours"] = "Vá em frente, é seu!",
   ["_OaksLabRivalTakesText1"] = "{RIVAL}: Mas não mesmo!\v{PLAYER}, eu quero\vesse POKéMON!",
@@ -73,15 +94,12 @@ return {
 ["SummerBeachHouseSurfinDudeText2"] = "Venha SURFAR quan-\ndo quiser, amigo!",
 ["SummerBeachHouseSurfinDudeText3"] = "Quer ir SURFAR?",
 ["SummerBeachHouseSurfinDudeText4"] = "Tem promoção de dogão hoje!",
-
 ["_SummerBeachHousePrinterText1"] = "É algum tipo de máquina...",
 ["_SummerBeachHousePrinterText2"] = "IMPRESSORA DA CASA\nDE PRAIA DO VERÃO\vPOKéMON...",
 ["_SummerBeachHousePrinterText3"] = "Está mostrando seus recordes.\fQuer IMPRIMIR?",
 ["_SummerBeachHousePrinterText4"] = "IMPRESSORA DA CASA\nDE PRAIA DO VERÃO\vPOKéMON...\fEstá mostrando seus recordes.\fQuer IMPRIMIR?",
 ["_SummerBeachHousePrinterText5"] = "IMPRESSÃO concluída",
 ["_SummerBeachHousePrinterText6"] = "Erro de impressão!",
-
---bug-catcher de viridian forest
 ["_ViridianForestCooltrainerFBattleText"] = "Oi, você tem um PIKACHU?",
 ["_ViridianForestCooltrainerFEndBattleText"] = "Ah, não!\nSério?",
 ["_ViridianForestCooltrainerFAfterBattleText"] = "Procurei por toda\na parte, mas não\vencontrei nenhum\vPIKACHU por aqui!",
@@ -89,7 +107,6 @@ return {
 ["_ViridianForestYoungster5EndBattleText"] = "\nDepois de tudo\vque eu fiz...",
 ["_ViridianForestYoungster5AfterBattleText"] = "METAPOD é legal\nporque seu maior\vataque é a sua\vdefesa!",
 ["_ViridianForestYoungster6Text"] = "Fiquei sem POKé\nBOLAs para pegar\vmais POKéMON!\fÉ bom sempre ter\nalgumas reservas!",
-
 
   ["_AIBattleUseItemText"] = "{RAM:wTrainerName}\nusou {RAM:wNameBuffer}\vem {RAM:wEnemyMonNick}!",
   ["_AIBattleWithdrawText"] = "{RAM:wTrainerName}\nretirou {RAM:wEnemyMonNick}!",
@@ -493,25 +510,25 @@ return {
   ["_CopycatsHouse2FSNESText"] = "Um jogo do MARIO\ncom ele usando um\vbalde na cabeça!",
   ["_CriticalHitText"] = "Ataque Crítico!",
   ["_CuboneDexEntry"] = "Como ele nunca re-\nmove seu capacete\nde crânio, ninguém\fnunca viu o rosto\nverdadeiro desse\nPOKéMON",
-  ["_CurrentTooFastText"] = "Bem-vindo ao\nClube Cabo!",
-  ["_CyclingIsFunText"] = "A correnteza aqui\né muito rápida!",
+  ["_CurrentTooFastText"] = "A correnteza aqui é muito forte!",
+  ["_CyclingIsFunText"] =   "Pedalar é mais legal que SURFAR!",
   ["_DaycareGentlemanAllRightThenText"] = "Tudo bem, então.\n",
   ["_DaycareGentlemanCantAcceptMonWithHMText"] = "Não posso aceitar\num POKéMON que\vsabe técnicas\vocultas (MO)!",
   ["_DaycareGentlemanComeAgainText"] = "Volte mais tarde.",
-  ["_DaycareGentlemanComeSeeMeInAWhileText"] = "Volte depois de\nalgum tempo.",
+  ["_DaycareGentlemanComeSeeMeInAWhileText"] = "Volte depois de algum tempo.",
   ["_DaycareGentlemanGotMonBackText"] = "{PLAYER} recolheu\n{RAM:wDayCareMonName}.",
-  ["_DaycareGentlemanHeresYourMonText"] = "Obrigado!\nAqui está seu\vPOKéMON!",
+  ["_DaycareGentlemanHeresYourMonText"] = "Obrigado! Aqui está seu POKéMON!",
   ["_DaycareGentlemanIntroText"] = "Eu cuido dessa\nCRECHE POKéMON!\vGostaria que eu\vcuidasse de um de\vseus POKéMON?",
   ["_DaycareGentlemanMonHasGrownText"] = "{RAM:wNameBuffer}\ncresceu um pouco!\fO seu nível, \naumentou em {NUM:wDayCareNumLevelsGrown, 1, 3}!\fNão é demais?",
   ["_DaycareGentlemanMonNeedsMoreTimeText"] = "Já voltou?\n{RAM:wNameBuffer} ainda\vprecisa de mais\vtempo comigo.",
   ["_DaycareGentlemanNoRoomForMonText"] = "Você não tem \nespaço para pegar\vesse POKéMON!",
-  ["_DaycareGentlemanNotEnoughMoneyText"] = "Ei, você não tem\n¥ suficiente!",
-  ["_DaycareGentlemanOnlyHaveOneMonText"] = "Você só tem um\nPOKéMON com você.",
+  ["_DaycareGentlemanNotEnoughMoneyText"] = "Ei, você não tem ¥ suficiente!",
+  ["_DaycareGentlemanOnlyHaveOneMonText"] = "Você só tem um POKéMON com você.",
   ["_DaycareGentlemanOweMoneyText"] = "Você me deve ¥{NUM:wDayCareTotalCost, 2 | LEADING_ZEROES | LEFT_ALIGN}\npelos cuidados\vque tive com\vesse POKéMON.\vQuer recolher\v{RAM:wDayCareMonName} agora?",
-  ["_DaycareGentlemanWhichMonText"] = "Qual POKéMON\neu devo cuidar?",
+  ["_DaycareGentlemanWhichMonText"] = "Qual POKéMON eu devo cuidar?",
   ["_DaycareGentlemanWillLookAfterMonText"] = "Tudo bem, então.\n{RAM:wNameBuffer} está\vem boas mãos!",
   ["_DepositHowManyText"] = "Quantas unidades?",
-  ["_DepositWhichMonText"] = "Depositar qual\nPOKéMON?",
+  ["_DepositWhichMonText"] = "Depositar qual POKéMON?",
   ["_DewgongDexEntry"] = "Armazena energia\ntérmica em seu\ncorpo. Nada a\festáveis 15km/h\nmesmo em intensas\náguas geladas",
   ["_DexCompletionText"] = "Seu progresso da\nPOKéDEX é:\f{NUM:hDexRatingNumMonsSeen, 1, 3} POKéMON vistos\n{NUM:hDexRatingNumMonsOwned, 1, 3} POKéMON pegos\fAvaliação do\nPROF.CARVALHO:",
   ["_DexRatingText"] = "Avaliação da\nsua POKéDEX:",
@@ -761,7 +778,7 @@ return {
   ["_HitXTimesText"] = "Acertou {NUM:wEnemyNumHits, 1, 1} vezes!",
   ["_HitmonchanDexEntry"] = "Enquanto aparenta\nnão estar fazendo\nnada, dispara seus\fsocos tão rápidos\nque é impossível\nde se ver",
   ["_HitmonleeDexEntry"] = "Quando está com\npressa, alonga\nsuas pernas.\fCorre suavemente\nnum galope de pas-\nsos extra longos",
-  ["_HookedMonAttackedText"] = "O FANTASMA foi\nidentificado com\no SILPHOSCÓPIO!",
+  ["_HookedMonAttackedText"] = "Um {RAM:wEnemyMonNick} foi fisgado e atacou!",
   ["_HorseaDexEntry"] = "Conhecido por der-\nrubar insetos em\npleno voo, com\fseu preciso jato\nde tinta. Faz seu\nninho em corais",
   ["_HurtByBurnText"] = "A queimadura\ncontinua a ferir!",
   ["_HurtByLeechSeedText"] = "A semente sugou\nenergia vital de\vPC!",
@@ -2306,7 +2323,8 @@ return {
   ["_SilphCo7FScientistAfterBattleText"] = "Apesar da sua\nidade, você é um\vtreinador muito\vtalentoso!",
   ["_SilphCo7FScientistBattleText"] = "Heheh!\fVocê me confundiu\ncom um funcio-\vnário da SILPH?",
   ["_SilphCo7FScientistEndBattleText"] = "Estou\nacabado!",
-  ["_SilphCo7FSilphWorkerM1HaveThisPokemonText"] = "Ah! Oi! Você não é\nda EQUIPE ROCKET!\vVocê veio para\vme salvar?\vPuxa, obrigado!\fQuero que você\nfique com esse\vPOKéMON por estar\vnos salvando.",
+  ["_SilphCo7FSilphWorkerM1HaveThisPokemonText"] = "Ah! Oi! Você não é\nda EQUIPE ROCKET!\vVocê veio para\vme salvar?\vPuxa, obrigado!\fQuero que você\nfique com esse\vPOKéMON por estar\vnos salvando.", 
+  ["_SilphCo7FSilphWorkerM1ThankYouText"] = "Ah! Oi! Você não é\nda EQUIPE ROCKET!\vVocê veio para\vme salvar?\vPuxa, obrigado!\fQuero que você\nfique com esse\vPOKéMON por estar\vnos salvando.", 
   ["_SilphCo7FSilphWorkerM1IsOurPresidentOkText"] = "O CHEFE da EQUIPE\nROCKET foi para a\vsala de reuniões!\vSerá que nosso\vPRESIDENTE está\vem segurança?",
   ["_SilphCo7FSilphWorkerM1LaprasDescriptionText"] = "É um LAPRAS.\nEle é muito inte-\vligente.\fNós o mantínhamos\nno laboratório,\vmas ele ficará\vmuito melhor fora\vdaqui e com você!\fEu acho que você\nserá um ótimo\vtreinador para\vesse LAPRAS!\fEle é um ótimo\nnadador. Pode até\vte dar uma carona!",
   ["_SilphCo7FSilphWorkerM1SavedText"] = "Finalmente salvo!\nMuito obrigado!",
