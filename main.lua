@@ -19,6 +19,40 @@ local TrainerCard = require("src.ui.TrainerCard")
 local Badges = require("src.inventory.Badges")
 
 return function(mod)
+
+  local compile = loadstring or load
+
+  local source, err = mod:read("vr_options.lua")
+  if not source then
+    mod.log:error("cannot read vr_options.lua: %s", tostring(err))
+    return
+  end
+
+  local chunk, err = compile(
+    source,
+    "@" .. mod.path .. "/vr_options.lua"
+  )
+
+  if not chunk then
+    mod.log:error("cannot compile vr_options.lua: %s", tostring(err))
+    return
+  end
+
+  local options = chunk()
+  options.install(mod)
+-- Carrega as opções persistentes para o restante do mod.
+mod.exports.idioma_golpes =
+    mod.options:get("idioma_golpes")
+
+mod.exports.mostrar_inimigo =
+    mod.options:get("mostrar_inimigo")
+
+mod.exports.precos_linha =
+    mod.options:get("precos_linha")
+
+mod.exports.trainer_card =
+    mod.options:get("trainer_card")
+
   -- mod:read is the supported way into your own directory; the catalogs are
   -- plain Lua tables, so read and run them rather than require()ing them.
   local function catalog(name)
@@ -65,7 +99,10 @@ return function(mod)
       page.image = mod.assets:path(page.image)
     end
     mod.content.font:register(id, page)
-	--mod.content.font:register("ttf", {})
+	-- mod.content.font:register("ttf", {
+    -- file = mod.assets:path("assets/fonts/plainpixel/Prop10.ttf"),
+    -- size = 10,
+    --})
   end
   -- charmap: which byte sequence draws which code
   for seq, code in pairs(catalog("charmap")) do
@@ -80,12 +117,48 @@ return function(mod)
   counts.strings = each("strings", function(source, value)
     mod.content.strings:override(source, value)
   end)
+  local mostrarInimigo = mod.options:get("mostrar_inimigo")
+
+if mostrarInimigo then
+  mod.content.strings:override("Enemy %s", "%s inimigo ")
+  mod.content.strings:override("%s\nused %s!", "%s\nusou %s!")
+else
+  mod.content.strings:override("Enemy %s", "%s")
+  mod.content.strings:override("%s\nused %s!", "%s usou\n%s!")
+end
+
+  
+  
   counts.species = each("species_names", function(id, value)
     mod.content.pokemon:patch(id, { name = value })
   end)
-  counts.moves = each("move_names", function(id, value)
-    mod.content.moves:patch(id, { name = value })
-  end)
+ ---------------
+ 
+ 
+
+-- Se for true, faz a alteração nos golpes
+
+local idioma = mod.options:get("idioma_golpes")
+
+if idioma == "portuguese1" then
+
+    counts.moves = each("move_names", function(id, value)
+        mod.content.moves:patch(id, { name = value })
+    end)
+
+elseif idioma == "portuguese2" then
+
+    counts.moves = each("move_names2", function(id, value)
+        mod.content.moves:patch(id, { name = value })
+    end)
+
+end
+
+
+
+  
+  
+ ------------ 
   counts.items = each("item_names", function(id, value)
     mod.content.items:patch(id, { name = value })
   end)
@@ -118,24 +191,9 @@ return function(mod)
   
   
   
-    -------------------------------------------------------------------------
+-------------------------------------------------------------------------
   -- Battle UI
-  -------------------------------------------------------------------------
-local function displayName(b)
-  return b.isPlayer and b.name or ("" .. b.name)
-end
-
--- Apply the "Enemy " prefix to a pre-built message from a module that
--- only knows the raw nickname (Status.beforeMove/residual,
--- TrainerAI.useItem): splice it in before the first name occurrence.
-local function prefixEnemy(msg, battler)
-  if battler.isPlayer then return msg end
-  local s = msg:find(battler.name, 1, true)
-  if not s then return msg end
-  return msg:sub(1, s - 1) .. "" .. msg:sub(s)
-end
-
-
+-------------------------------------------------------------------------
   BattleState.drawTextArea = function(self)
 
 function BattleState:drawTextArea()
@@ -175,7 +233,7 @@ function BattleState:drawTextArea()
     love.graphics.setColor(0, 0, 0, 1)
     Font.draw(Strings("LUTAR"), 56, 112)
     Font.drawCode(0xE1, 112, 112); Font.drawCode(0xE2, 120, 112)
-    Font.draw(Strings("ITENS"), 56, 128); Font.draw(Strings("HYD~"), 112, 128)
+    Font.draw(Strings("ITENS"), 56, 128); Font.draw(Strings("FUGIR"), 112, 128)
     Font.drawCode(0xED, 48, (self.demoTimer or 0) <= 80 and 112 or 128)
   elseif self.phase == "menu" then
     local col = (self.menuIndex - 1) % 2
@@ -257,7 +315,34 @@ function BattleState:drawTextArea()
 end
 
   end
+-------------------------------------------------------------------------
+  -- MOVELEARN--reposiciona o menu de aprendizagem de golpes novos
+-------------------------------------------------------------------------
+ local CURSOR = 0xED
+
+function MoveLearnMenu:draw()
+  if not self.selecting then return end
+  -- single-spaced move list box (TryingToLearn: TextBoxBorder at 4,7)
+  -- plus the port's extra CANCEL row
+  Font.drawBox(0, 5, 20, 7)
+  love.graphics.setColor(0, 0, 0, 1)
+  for i, mv in ipairs(self.mon.moves) do
+    Font.draw(self.game.data.moves[mv.id].name, 16, (5 + i) * 8)
+  end
+  Font.draw(Strings("CANCEL"), 16, (6 + #self.mon.moves) * 8)
+  Font.drawCode(CURSOR, 08, (5 + self.index) * 8)
+  -- WhichMoveToForgetText in the bottom dialogue box
+  Font.drawBox(0, 12, 20, 6)
+  Font.draw(Strings("Which move should"), 8, 14 * 8)
+  Font.draw(Strings("be forgotten?"), 8, 16 * 8)
+  love.graphics.setColor(1, 1, 1, 1)
+end  
   
+  
+  
+-------------------------------------------------------------------------
+  -- Traduções Literais
+-------------------------------------------------------------------------  
   local literal_body = mod:read("lang/literal_handlers.lua")
   if literal_body then
     local chunk, err = loadstring(literal_body, "lang/literal_handlers.lua")
@@ -266,11 +351,9 @@ end
     if type(setup) ~= "function" then error("literal_handlers.lua must return a function") end
     setup(mod)
   end
-
-
---substitui a função para alterar o alinhamento dos preços/qtds do inventário e lojas  
-
-
+-------------------------------------------------------------------------
+  -- Correção do Inventário, Preços e Quantidades na linha debaixo
+-------------------------------------------------------------------------
 function ListMenu:draw() 
   love.graphics.setColor(1, 1, 1, 1)
   love.graphics.rectangle("fill", 0, 0, 160, 144)
@@ -298,8 +381,9 @@ function ListMenu:draw()
       love.graphics.setColor(0, 0, 0, 1)
     end
     if item.right then
-      Font.draw(item.right, 160 - 8 - Font.width(item.right), y + 8)
-    end
+	local offset = mod.exports.precos_linha and 8 or 0
+	Font.draw(item.right, 160 - 8 - Font.width(item.right), y + offset)
+	end
     if i == self.index then
       -- hollowIndex: a chosen row keeps the hollow '▷' left behind by
       -- pokered's PlaceUnfilledArrowMenuCursor (the old man demo's
@@ -352,34 +436,17 @@ function ListMenu:draw()
   
 end
 
+--- ==========================================
+-- Cartão de Treinador
+-- ==========================================
 
---reposiciona o menu de apredizado de golpes novos
+local originalTrainerCardDraw = TrainerCard.draw
 
- local CURSOR = 0xED
-
-function MoveLearnMenu:draw()
-  if not self.selecting then return end
-  -- single-spaced move list box (TryingToLearn: TextBoxBorder at 4,7)
-  -- plus the port's extra CANCEL row
-  Font.drawBox(0, 5, 20, 7)
-  love.graphics.setColor(0, 0, 0, 1)
-  for i, mv in ipairs(self.mon.moves) do
-    Font.draw(self.game.data.moves[mv.id].name, 16, (5 + i) * 8)
-  end
-  Font.draw(Strings("CANCEL"), 16, (6 + #self.mon.moves) * 8)
-  Font.drawCode(CURSOR, 08, (5 + self.index) * 8)
-  -- WhichMoveToForgetText in the bottom dialogue box
-  Font.drawBox(0, 12, 20, 6)
-  Font.draw(Strings("Which move should"), 8, 14 * 8)
-  Font.draw(Strings("be forgotten?"), 8, 16 * 8)
-  love.graphics.setColor(1, 1, 1, 1)
-end
-
-
--- reorganizar Trainer Card
-
-local oldDraw = TrainerCard.draw
 function TrainerCard:draw()
+  if not mod.exports.trainer_card then
+    return originalTrainerCardDraw(self)
+  end
+
   love.graphics.setColor(1, 1, 1, 1)
   love.graphics.rectangle("fill", 0, 0, 160, 144)
   local save = self.game.save
@@ -400,12 +467,13 @@ function TrainerCard:draw()
   Font.draw(("%3d:%02d"):format(
     math.floor(t / 3600),
     math.floor(t / 60) % 60
-), 48, 50)
+  ), 48, 50)
 
-  -- the circle-dotted BADGES banner (TrainerInfo_BadgesText)
+  -- the circle-dotted BADGES banner
   self:frameBox(0, 8, 20, 3)
   love.graphics.setColor(0, 0, 0, 1)
   Font.draw(Strings("BADGES"), 40, 73)
+
   if self.circle then
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.circle, 32, 72)
@@ -413,28 +481,36 @@ function TrainerCard:draw()
     love.graphics.setColor(0, 0, 0, 1)
   end
 
-
- -- numbered badge grid (rows 11-17): face by default, badge when owned
+  -- numbered badge grid
   self:frameBox(0, 11, 20, 7)
   local badges = Badges.list(self.game.data)
+
   for i = 1, #badges do
     local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
     local tx, ty = 16 + col * 32, 95 + row * 22
-    -- the extracted sheets cover the eight Kanto slots; a longer badge
-    -- list draws its extra entries unnumbered rather than crashing
+
     if self.nums and self.nums.quads[i - 1] then
       love.graphics.setColor(1, 1, 1, 1)
       love.graphics.draw(self.nums.img, self.nums.quads[i - 1], tx, ty)
     end
+
     if self.faces and self.faces.quads[i - 1] then
       love.graphics.setColor(1, 1, 1, 1)
       local owned = save.inventory[Badges.itemFor(badges[i])]
       local sheet = owned and self.badges or self.faces
-      love.graphics.draw(sheet.img, sheet.quads[i - 1], tx + 8, ty + 2)
+      love.graphics.draw(
+        sheet.img,
+        sheet.quads[i - 1],
+        tx + 8,
+        ty + 2
+      )
     end
   end
+
   love.graphics.setColor(1, 1, 1, 1)
 end
+
+
 
 
 end
