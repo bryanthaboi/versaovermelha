@@ -1,21 +1,3 @@
-# Versão Brasileira
-
-Tradução do conteúdo dos jogos, Red, Blue e Yellow.
-A ripagem foi feita a partir da versão Vermelha, como Blue usa os mesmos textos não é afetada, porém Yellow apresenta algumas inconsistências no diálogo.
-
-O processo de ripagem não foi perfeito e alguns texto podem estar completamente errados ou quebrados.
-Algumas coisas do recomp foram reconstruídas do zero e a tradução não pega, ficando em Inglês por enquanto (ex: Cassino).
-Versão Amarela não é 100% suportada por apresentar os diálogos padrões para Red/Blue.
-
-Qualquer erro ou inconsistência encontrada podem reportar que irei atualizar o patch assim que possível corrigir para deixar os 3 jogos 100%.
-
-OBS: Mods adicionais ao recomp não são suportados, apesar de usar algumas labels iguais se serem traduzidos parcialmente, esse patch aqui é apenas para o conteúdo original do jogo.
-
-
-
-
-
-
 # VersãoVermelha
 
 Brazilian Portuguese, ripped from the **Hyd~Traduções Pokémon Versão
