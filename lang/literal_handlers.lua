@@ -62,39 +62,5 @@ return function(mod)
       return false
     end,
   })
-  mod.content.map_scripts:register("BIKE_SHOP", {talk = {
-    ["TEXT_BIKESHOP_CLERK"] = function(game, ow, npc, done)
-      if (game.save.inventory["BICYCLE"] or 0) > 0 then
-        game.stack:push(TextBox.new(game, "O que achou da sua\nnova BICICLETA?\012Você pode pedalar\ncom ela na ROTA\011DO CICLISMO e\011até em cavernas!", done))
-      else
-        if (game.save.inventory["BIKE_VOUCHER"] or 0) > 0 then
-          game.stack:push(TextBox.new(game, "Oh, isso é um...\012VALE-BICICLETA!\012OK! Aqui está!", function()
-            game.save.inventory["BIKE_VOUCHER"] = nil
-            game.save.inventory["BICYCLE"] = 1
-            game.save.flags["EVENT_GOT_BICYCLE"] = true
-            game.stack:push(TextBox.new(game, "{PLAYER} trocou\no VALE-BICICLETA\011por uma BICICLETA.", done))
-          end))
-        else
-          game.stack:push(TextBox.new(game, "Olá! Bem-vindo\na minha LOJA\011DE BICICLETAS.\012Nós temos a\nbicicleta ideal\011para você!", done))
-        end
-      end
-    end,
-  },
-  })
-  mod.content.map_scripts:register("BIKE_SHOP", {talk = {
-    ["TEXT_BIKESHOP_MIDDLE_AGED_WOMAN"] = function(game, ow, npc, done)
-      game.stack:push(TextBox.new(game, "Uma BICICLETA\nsimples pra usar\011na cidade já está\011bom pra mim!\012Não tem como por\numa cestinha de\011compras em uma\011Mountain BIKE!", done))
-    end,
-  },
-  })
-  mod.content.map_scripts:register("BIKE_SHOP", {talk = {
-    ["TEXT_BIKESHOP_YOUNGSTER"] = function(game, ow, npc, done)
-      if (game.save.flags["EVENT_GOT_BICYCLE"] or (game.save.inventory["BICYCLE"] or 0) > 0) then
-        game.stack:push(TextBox.new(game, "Uau! Sua BICICLETA\né super legal!", done))
-      else
-        game.stack:push(TextBox.new(game, "Essas BICICLETAs\nsão legais, mas\011são muito caras!", done))
-      end
-    end,
-  },
-  })
+  
 end
