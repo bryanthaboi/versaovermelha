@@ -1,6 +1,7 @@
 {
   "id": "versaovermelha",
   "name": "VersãoVermelha",
+  "github": "hydhyro/versaovermelha",
   "version": "0.2.5",
   "api": 2,
   "entry": "main.lua",
