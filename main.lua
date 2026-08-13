@@ -541,6 +541,111 @@ ListMenu.draw = function(self, ...)
     return a, b, c, d, e
 end
 
+-------------
+mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
+    local result = next(game, items, mon, ctx)
+
+    if type(result) == "table" then
+        for _, item in ipairs(result) do
+            if item.action == "switch" then
+                item.label = "MOVER"
+            end
+        end
+    end
+
+    return result
+end)
+------------------
+------------------
+  local TitleState = require("src.ui.TitleState")
+  local oldDraw = TitleState.draw
+
+  TitleState.draw = function(self)
+    oldDraw(self)
+
+    if self.version and not self.yellow then
+      local iw, ih = self.version:getDimensions()
+
+      -- cobre a versão antiga
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.rectangle("fill", 40, 64, 104, 8)
+
+      -- desenha a versão na nova ordem/posição
+      if self.blue then
+        love.graphics.draw(
+          self.version,
+          love.graphics.newQuad(88, 0, 72, 8, iw, ih),
+          48, 64
+        )
+      else
+        love.graphics.draw(
+          self.version,
+          love.graphics.newQuad(0, 0, 88, 8, iw, ih),
+          40, 64
+        )
+      end
+    end
+
+    love.graphics.setColor(1, 1, 1, 1)
+  end
+
+---yellow
+---------------
+  
+
+  
+local TitleState = require("src.ui.TitleState")
+local oldDraw = TitleState.draw
+local Font = require("src.render.Font")
+
+TitleState.draw = function(self)
+  oldDraw(self)
+
+local function easeNoOvershoot(t)
+  if t <= 0 then return 0 end
+  if t >= 1 then return 1 end
+
+  local u = t - 1
+  local v = 1 + 2.70158 * u * u * u + 1.70158 * u * u
+
+  return math.min(v, 1)
+end
 
 
+  if self.yellow then
+
+    -- contador da animação
+    self.__testFrame = (self.__testFrame or 0) + 1
+
+    local f = self.__testFrame
+
+    -- começa em Y=-15 e cai até Y=56
+    -- sem ultrapassar nem voltar
+local t = math.min(1, math.max(0, (f - 4) / 15))
+local y = math.floor(-15 + (56 + 15) * easeNoOvershoot(t))
+
+    local text1 = "VERSÃO"
+    local text2 = "AMARELA"
+
+    local x1 = 10
+    local x2 = 104
+
+    local w1 = Font.width(text1)
+    local w2 = Font.width(text2)
+
+    -- fundos brancos
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.rectangle("fill", x1, y, w1, 8)
+    love.graphics.rectangle("fill", x2, y, w2, 8)
+
+    -- textos pretos
+    love.graphics.setColor(0, 0, 0, 1)
+    Font.draw(text1, x1, y)
+    Font.draw(text2, x2, y)
+
+    love.graphics.setColor(1, 1, 1, 1)
+  end
+end
+------------------
+------------------
 end
