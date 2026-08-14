@@ -19,6 +19,40 @@ local TrainerCard = require("src.ui.TrainerCard")
 local Badges = require("src.inventory.Badges")
 
 return function(mod)
+
+  local compile = loadstring or load
+
+  local source, err = mod:read("vr_options.lua")
+  if not source then
+    mod.log:error("cannot read vr_options.lua: %s", tostring(err))
+    return
+  end
+
+  local chunk, err = compile(
+    source,
+    "@" .. mod.path .. "/vr_options.lua"
+  )
+
+  if not chunk then
+    mod.log:error("cannot compile vr_options.lua: %s", tostring(err))
+    return
+  end
+
+  local options = chunk()
+  options.install(mod)
+-- Carrega as opções persistentes para o restante do mod.
+mod.exports.idioma_golpes =
+    mod.options:get("idioma_golpes")
+
+mod.exports.mostrar_inimigo =
+    mod.options:get("mostrar_inimigo")
+
+mod.exports.precos_linha =
+    mod.options:get("precos_linha")
+
+mod.exports.trainer_card =
+    mod.options:get("trainer_card")
+
   -- mod:read is the supported way into your own directory; the catalogs are
   -- plain Lua tables, so read and run them rather than require()ing them.
   local function catalog(name)
@@ -65,7 +99,10 @@ return function(mod)
       page.image = mod.assets:path(page.image)
     end
     mod.content.font:register(id, page)
-	--mod.content.font:register("ttf", {})
+	-- mod.content.font:register("ttf", {
+    -- file = mod.assets:path("assets/fonts/plainpixel/Prop10.ttf"),
+    -- size = 10,
+    --})
   end
   -- charmap: which byte sequence draws which code
   for seq, code in pairs(catalog("charmap")) do
@@ -80,12 +117,48 @@ return function(mod)
   counts.strings = each("strings", function(source, value)
     mod.content.strings:override(source, value)
   end)
+  local mostrarInimigo = mod.options:get("mostrar_inimigo")
+
+if mostrarInimigo then
+  mod.content.strings:override("Enemy %s", "%s inimigo ")
+  mod.content.strings:override("%s\nused %s!", "%s\nusou %s!")
+else
+  mod.content.strings:override("Enemy %s", "%s")
+  mod.content.strings:override("%s\nused %s!", "%s usou\n%s!")
+end
+
+  
+  
   counts.species = each("species_names", function(id, value)
     mod.content.pokemon:patch(id, { name = value })
   end)
-  counts.moves = each("move_names", function(id, value)
-    mod.content.moves:patch(id, { name = value })
-  end)
+ ---------------
+ 
+ 
+
+-- Se for true, faz a alteração nos golpes
+
+local idioma = mod.options:get("idioma_golpes")
+
+if idioma == "portuguese1" then
+
+    counts.moves = each("move_names", function(id, value)
+        mod.content.moves:patch(id, { name = value })
+    end)
+
+elseif idioma == "portuguese2" then
+
+    counts.moves = each("move_names2", function(id, value)
+        mod.content.moves:patch(id, { name = value })
+    end)
+
+end
+
+
+
+  
+  
+ ------------ 
   counts.items = each("item_names", function(id, value)
     mod.content.items:patch(id, { name = value })
   end)
@@ -118,146 +191,13 @@ return function(mod)
   
   
   
-    -------------------------------------------------------------------------
-  -- Battle UI
-  -------------------------------------------------------------------------
-local function displayName(b)
-  return b.isPlayer and b.name or ("" .. b.name)
-end
-
--- Apply the "Enemy " prefix to a pre-built message from a module that
--- only knows the raw nickname (Status.beforeMove/residual,
--- TrainerAI.useItem): splice it in before the first name occurrence.
-local function prefixEnemy(msg, battler)
-  if battler.isPlayer then return msg end
-  local s = msg:find(battler.name, 1, true)
-  if not s then return msg end
-  return msg:sub(1, s - 1) .. "" .. msg:sub(s)
-end
-
-
-  BattleState.drawTextArea = function(self)
-
-function BattleState:drawTextArea()
-  Font.drawBox(0, 12, 20, 6)
-  love.graphics.setColor(0, 0, 0, 1)
-  if self.phase == "messages" and (self.current or self.animPlaying) then
-    -- during the move animation self.current is nil but shown still holds
-    -- the "used X!" lines; keep drawing them like pokered, whose move
-    -- animations only touch sprites and never the textbox tilemap (#296)
-    -- rolling 2-line window: shown[1] at row y=112, shown[2] at y=128 (battle
-    -- text uses every other tile row, hlcoord *,14 / *,16).  scrollPx animates
-    -- the lines up one row (ScrollTextUpOneLine) so a 3rd line scrolls into
-    -- view instead of drawing off-screen at y=144 (#216).
-    if self.scrollPx and self.scrollPx > 0 then
-      self.scrollPx = self.scrollPx - 2
-      if self.scrollPx <= 0 then self.scrollPx = nil end
-    end
-    local off = self.scrollPx or 0
-    local ys = { 112, 128 }
-    for li, line in ipairs(self.shown or {}) do
-      local y = (ys[li] or 128) + off
-      for i = 1, #line do
-        Font.drawCode(line[i], 8 + (i - 1) * 8, y)
-      end
-    end
-    -- the blinking down arrow ('▼', glyph $EE) while a \v CONT wait
-    -- (_ContText) or a typed-out page (PromptText) holds the box; both write
-    -- it at (18,16), bottom-right, like TextBox / home/text.asm (#317)
-    if (self.msgWaiting or self.msgPrompt) and self.frame % 60 < 30 then
-      Font.drawCode(0xEE, (0 + 20 - 2) * 8, (12 + 6 - 1) * 8 - 4)
-    end
-  elseif self.phase == "menu" and self.demo then
-    -- the old-man script (DisplayBattleMenu, core.asm:2038-2049): the
-    -- standard menu, with the '▶' hand drawn by the scripted keystrokes
-    -- -- next to FIGHT (9,14) for the first 80 frames, then ITEM (9,16)
-    Font.drawBox(5, 12, 15, 6)
-    love.graphics.setColor(0, 0, 0, 1)
-    Font.draw(Strings("LUTAR"), 56, 112)
-    Font.drawCode(0xE1, 112, 112); Font.drawCode(0xE2, 120, 112)
-    Font.draw(Strings("ITENS"), 56, 128); Font.draw(Strings("HYD~"), 112, 128)
-    Font.drawCode(0xED, 48, (self.demoTimer or 0) <= 80 and 112 or 128)
-  elseif self.phase == "menu" then
-    local col = (self.menuIndex - 1) % 2
-    local row = math.floor((self.menuIndex - 1) / 2)
-    if self.safari then
-      -- SAFARI_BATTLE_MENU_TEMPLATE: full-width box, "BALLx  BAIT /
-      -- THROW ROCK  RUN" from (2,14)
-      Font.drawBox(0, 12, 20, 6)
-      Font.draw(Strings("BOLA SAFÁRI"), 16, 112); Font.draw(Strings("ISCA"), 112, 112)
-      Font.draw(Strings("JOGAR PEDRA"), 16, 128); Font.draw(Strings("FUGIR"), 112, 128)
-      Font.drawCode(0xED, (col == 0 and 8 or 104), 112 + row * 16)
-    else
-      -- BATTLE_MENU_TEMPLATE: box (8,12)-(19,17), "FIGHT <PK><MN> /
-      -- ITEM  RUN" from (10,14); cursor columns 9 / 15
-      Font.drawBox(5, 12, 15, 6)
-      Font.draw(Strings("LUTAR"), 56, 112)
-      Font.drawCode(0xE1, 112, 112); Font.drawCode(0xE2, 120, 112)
-      Font.draw(Strings("ITENS"), 56, 128); Font.draw(Strings("FUGIR"), 112, 128)
-      Font.drawCode(0xED, (col == 0 and 48 or 104), 112 + row * 16)
-    end
-  elseif self.phase == "moveSelect" then
-    -- pokered MoveSelectionMenu: move list in a box at (4,12) 16x6,
-    -- names at column 6 from row 13, cursor at column 5.  PrintMenuItem:
-    -- the TYPE/PP box at (0,8) 11x5, with "TYPE/" at (1,9), the type at
-    -- (2,10) and "PP cur/max" at (5,11); its bottom border merges into
-    -- the move box's top border ('─' at (4,12), '┘' at (10,12)).
-    Font.drawBox(0, 8, 11, 5)
-    Font.drawBox(0, 12, 20, 6)
-    -- Those two cells are REPLACED on hardware: MoveSelectionMenu writes them
-    -- straight into the tilemap over the border it just laid down
-    -- (core.asm:2492-2501), and PrintMenuItem's own TextBoxBorder then redraws
-    -- the whole row on top (core.asm:2838-2844).  Font.drawCode blits a
-    -- black-on-transparent glyph instead, so the tile underneath survives: the
-    -- move box's '┌' keeps its Poké Ball corner showing through the '─', and
-    -- the '─' the move box drew at (10,12) pokes two dots out from under the
-    -- '┘' (#240).  Wipe each cell back to box white first, the way a tilemap
-    -- write does.
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("fill", 32, 96, 8, 8)
-    love.graphics.rectangle("fill", 80, 96, 8, 8)
-    Font.drawCode(Font.BORDER.h, 32, 96)
-    Font.drawCode(Font.BORDER.br, 80, 96)
-    love.graphics.setColor(0, 0, 0, 1)
-    for i, mv in ipairs(self.player.curMoves) do
-      -- unknown ids (mod-injected moves) print raw instead of crashing
-      local def = self.data.moves[mv.id]
-      Font.draw(def and def.name or tostring(mv.id), 16, 96 + i * 8)
-    end
-    Font.drawCode((self.moveSwapIndex == self.moveIndex) and 0xEC or 0xED,
-                  08, 96 + self.moveIndex * 8)
-    if self.moveSwapIndex and self.moveSwapIndex ~= self.moveIndex then
-      Font.drawCode(0xEC, 08, 96 + self.moveSwapIndex * 8)
-    end
-    local sel = self.player.curMoves[self.moveIndex]
-    if sel then
-      local def = self.data.moves[sel.id]
-      if self.player.disabledSlot == self.moveIndex then
-        Font.draw(Strings("disabled!"), 8, 80)
-      elseif def then
-        Font.draw(Strings("TYPE/"), 8, 72)
-        -- the type record's display name (a mod type shows its name, and
-        -- PSYCHIC_TYPE prints PSYCHIC like the original)
-        Font.draw(def.type and TypeChart.displayName(def.type) or "", 16, 80)
-        local maxPP = def.pp + (sel.ppUps or 0) * math.floor(def.pp / 5)
-        Font.draw(("%2d/%2d"):format(sel.pp, maxPP), 40, 88)
-      end
-    end
-  elseif self.phase == "mimicSelect" then
-    -- Mimic's copy menu (MoveSelectionMenu .mimicmenu, core.asm:
-    -- 2506-2517): the enemy's move list in a 16x6 box at (0,7), names
-    -- single-spaced from (2,8), cursor at column 1
-    Font.drawBox(0, 7, 20, 6)
-    love.graphics.setColor(0, 0, 0, 1)
-    for i, m in ipairs(self.mimicMoves) do
-      Font.draw(self.data.moves[m.id].name, 16, (7 + i) * 8)
-    end
-    Font.drawCode(0xED, 8, (7 + self.mimicIndex) * 8)
-  end
-end
-
-  end
+ 
   
+  
+  
+-------------------------------------------------------------------------
+  -- Traduções Literais
+-------------------------------------------------------------------------  
   local literal_body = mod:read("lang/literal_handlers.lua")
   if literal_body then
     local chunk, err = loadstring(literal_body, "lang/literal_handlers.lua")
@@ -266,175 +206,446 @@ end
     if type(setup) ~= "function" then error("literal_handlers.lua must return a function") end
     setup(mod)
   end
+-------------------------------------------------------------------------
+  -- Correção do Inventário, Preços e Quantidades na linha debaixo
 
 
---substitui a função para alterar o alinhamento dos preços/qtds do inventário e lojas  
+--- ==========================================
+-- Cartão de Treinador
+-- ==========================================
+local oldTrainerCardDraw = TrainerCard.draw
+
+TrainerCard.draw = function(self, ...)
+    if not mod.exports.trainer_card then
+        return oldTrainerCardDraw(self, ...)
+    end
+
+    local oldDraw = Font.draw
+    local oldGfxDraw = love.graphics.draw
+    local save = self.game.save
+
+    Font.draw = function(text, x, y, ...)
+        if x == 16 and y == 16 then
+            oldDraw(
+                Strings("NAME/%s", save.player.name or "RED"),
+                16, 12, ...
+            )
+
+        elseif x == 16 and y == 32 then
+            oldDraw(
+                Strings("DINHEIRO/"),
+                16, 25, ...
+            )
+
+            oldDraw(
+                ("¥%d"):format(save.money or 0),
+                48, 33, ...
+            )
+
+        elseif x == 16 and y == 48 then
+            local t = math.floor(save.playTime or 0)
+
+            oldDraw(
+                Strings("TEMPO/"),
+                16, 42, ...
+            )
+
+            oldDraw(
+                ("%3d:%02d"):format(
+                    math.floor(t / 3600),
+                    math.floor(t / 60) % 60
+                ),
+                48, 50, ...
+            )
+
+        elseif x == 56 and y == 72 then
+            oldDraw(
+                Strings("BADGES"),
+                40, 73, ...
+            )
+
+        else
+            return oldDraw(text, x, y, ...)
+        end
+    end
+
+    love.graphics.draw = function(image, ...)
+        local args = {...}
+
+        if image == self.circle then
+            local x = args[1]
+            local y = args[2]
+
+            if x == 48 and y == 72 then
+                args[1] = 32
+                args[2] = 72
+
+            elseif x == 104 and y == 72 then
+                args[1] = 112
+                args[2] = 72
+            end
+
+        elseif image == self.faces.img or image == self.badges.img then
+            local x = args[2]
+            local y = args[3]
+
+            if x and y then
+                local row = math.floor((y - 100) / 24)
+
+                args[2] = x + 4
+                args[3] = 97 + row * 22
+            end
+        end
+
+        return oldGfxDraw(image, unpack(args))
+    end
+
+    local ok, a, b, c, d, e =
+        pcall(oldTrainerCardDraw, self, ...)
+
+    Font.draw = oldDraw
+    love.graphics.draw = oldGfxDraw
+
+    if not ok then
+        error(a)
+    end
+
+    return a, b, c, d, e
+end
+
+--------------------------------------------------------------
+----------------------BATTLE UI
+--------------------------------------------------------------
+local oldDrawTextArea = BattleState.drawTextArea
+
+BattleState.drawTextArea = function(self, ...)
+    local oldDraw = Font.draw
+    local oldDrawCode = Font.drawCode
+	local oldDrawBox = Font.drawBox
+
+    Font.draw = function(text, x, y, ...)
+        if text == Strings("FIGHT", "battle") and x == 80 and y == 112 then
+            x = 56
+            y = 112
+
+        elseif text == Strings("ITEM", "battle") and x == 80 and y == 128 then
+            x = 56
+            y = 128
+
+        elseif text == Strings("RUN", "battle") and x == 128 and y == 128 then
+            x = 112
+            y = 128
+		--LISTA DE GOLPES	
+		elseif x == 48 and y >= 104 and y <= 128 then
+        x = 16	
+			
+        end
+
+        return oldDraw(text, x, y, ...)
+    end
+
+    Font.drawCode = function(code, x, y, ...)
+	--PKMN
+        if code == 0xE1 and x == 128 and y == 112 then
+            x = 112
+            y = 112
+
+        elseif code == 0xE2 and x == 136 and y == 112 then
+            x = 120
+            y = 112
+	--CURSORES DE BATALHA
+        elseif code == 0xED and x == 72 and y == 112 then
+            x = 48
+            y = 112
+        elseif code == 0xED and x == 120 and y == 112 then
+            x = 104
+            y = 112			
+        elseif code == 0xED and x == 72 and y == 128 then
+            x = 48
+            y = 128			
+        elseif code == 0xED and x == 120 and y == 128 then
+            x = 104
+            y = 128	
+	--CURSORES DE GOLPES
+			elseif code == 0xED and x == 40 and y == 104 then
+            x = 08
+            y = 104
+		elseif code == 0xED and x == 40 and y == 112 then
+            x = 08
+            y = 112
+		elseif code == 0xED and x == 40 and y == 120 then
+            x = 08
+            y = 120
+		elseif code == 0xED and x == 40 and y == 128 then
+            x = 08
+            y = 128
+		elseif code == 0xEC and x == 40 and y == 104 then
+            x = 08
+            y = 104				
+		elseif code == 0xEC and x == 40 and y == 112 then
+            x = 08
+            y = 112
+		elseif code == 0xEC and x == 40 and y == 120 then
+            x = 08
+            y = 120
+		elseif code == 0xEC and x == 40 and y == 128 then
+            x = 08
+            y = 128		
+	--CURSORES DE MIMIC
+	
+			
+        end
+		
+		
+		
+		
+		
+
+        return oldDrawCode(code, x, y, ...)
+    end
+--FIGHT/PKMN/ITEM/RUN BOX
+	Font.drawBox = function(x, y, w, h, ...)
+			if x == 8 and y == 12 and w == 12 and h == 6 then
+			x = 5
+			y = 12
+			w = 15
+			h = 6
+--MOVELIST BOX Font.drawBox(4, 12, 16, 6)			
+			elseif x == 4 and y == 12 and w == 16 and h == 6 then
+			x = 0
+			y = 12
+			w = 20
+			h = 6
+--MOVELIST TYPE BOX Font.drawBox(0, 8, 11, 5)			
+			--elseif x == 0 and y == 8 and w == 11 and h == 5 then
+			--x = 0
+			--y = 8
+			--w = 11
+			--h = 5			
+--MIMIC BOX Font.drawBox(0, 7, 16, 6)			
+			elseif x == 0 and y == 7 and w == 16 and h == 6 then
+			x = 0
+			y = 7
+			w = 20
+			h = 6
+--MOVE LEARN BOX Font.drawBox(0, 5, 20, 7)			
+			elseif x == 4 and y == 5 and w == 16 and h == 7 then
+			x = 0
+			y = 5
+			w = 20
+			h = 7
+    end
+
+	
+	
+
+    return oldDrawBox(x, y, w, h, ...)
+end
 
 
-function ListMenu:draw() 
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.rectangle("fill", 0, 0, 160, 144)
-  love.graphics.setColor(0, 0, 0, 1)
-  Font.draw(Strings(self.title), 8, 4)
-  if #self.items == 0 then
-    Font.draw(Strings("Nothing here."), 16, 64)
-  end
-  for row = 1, self.rows do
-    local i = self.scroll + row
-    local item = self.items[i]
-    if not item then break end
-    local y = 8 + row * 16
-    Font.draw(item.label, 16, y)
-    if item.ball then -- the Pokédex owned-ball marker tile
-      -- one blank glyph after the name, measured in glyph advances rather
-      -- than bytes: NIDORAN♂/♀ carry a multi-byte charmap entry, so
-      -- `#item.label` overcounted by 2 and pushed their ball 16px right (#285)
-      local bx = 16 + Font.width(item.label) + 8 + 3
-      local by = y + 3
-      love.graphics.circle("fill", bx, by, 3.5)
+    local ok, a, b, c, d, e = pcall(oldDrawTextArea, self, ...)
+
+	
+	Font.drawBox = oldDrawBox
+    Font.draw = oldDraw
+    Font.drawCode = oldDrawCode
+
+    if not ok then
+        error(a)
+    end
+
+    return a, b, c, d, e
+end
+
+----------------------------------------------
+----LEARN MOVE BOX
+----------------------------------------------
+local oldMoveLearnDraw = MoveLearnMenu.draw
+
+MoveLearnMenu.draw = function(self, ...)
+    local oldDraw = Font.draw
+    local oldDrawCode = Font.drawCode
+    local oldDrawBox = Font.drawBox
+
+    Font.draw = function(text, x, y, ...)
+        -- Nomes dos golpes
+        if x == 48 and y >= 48 and y <= 128 then
+            x = 16
+        -- CANCEL
+        elseif text == Strings("CANCEL") and x == 48 then
+            x = 16
+        end
+
+        return oldDraw(text, x, y, ...)
+    end
+
+    Font.drawCode = function(code, x, y, ...)
+        -- Cursor da lista
+        if code == 0xED and x == 40 then
+        x = 8
+		end
+
+        return oldDrawCode(code, x, y, ...)
+    end
+
+    Font.drawBox = function(x, y, w, h, ...)
+        -- Caixa da lista de golpes
+        if x == 4 and y == 5 and w == 16 and h == 7 then
+            x = 0
+            y = 5
+            w = 20
+            h = 7
+        end
+
+        return oldDrawBox(x, y, w, h, ...)
+    end
+
+    local ok, a, b, c, d, e = pcall(oldMoveLearnDraw, self, ...)
+
+    Font.draw = oldDraw
+    Font.drawCode = oldDrawCode
+    Font.drawBox = oldDrawBox
+
+    if not ok then
+        error(a)
+    end
+
+    return a, b, c, d, e
+end
+
+----------------------------------------
+--INVENTÁRIO - QUEBRA DE LINHA
+----------------------------------------
+local oldListMenuDraw = ListMenu.draw
+
+ListMenu.draw = function(self, ...)
+    local oldDraw = Font.draw
+    local offset = mod.exports.precos_linha and 8 or 0
+
+    Font.draw = function(text, x, y, ...)
+        if x == 160 - 8 - Font.width(text) then
+            y = y + offset
+        end
+
+        return oldDraw(text, x, y, ...)
+    end
+
+    local ok, a, b, c, d, e = pcall(oldListMenuDraw, self, ...)
+
+    Font.draw = oldDraw
+
+    if not ok then
+        error(a)
+    end
+
+    return a, b, c, d, e
+end
+
+-------------
+mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
+    local result = next(game, items, mon, ctx)
+
+    if type(result) == "table" then
+        for _, item in ipairs(result) do
+            if item.action == "switch" then
+                item.label = "MOVER"
+            end
+        end
+    end
+
+    return result
+end)
+------------------
+------------------
+  local TitleState = require("src.ui.TitleState")
+  local oldDraw = TitleState.draw
+
+  TitleState.draw = function(self)
+    oldDraw(self)
+
+    if self.version and not self.yellow then
+      local iw, ih = self.version:getDimensions()
+
+      -- cobre a versão antiga
       love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.rectangle("fill", bx - 3.5, by - 0.5, 7, 1)
-      love.graphics.circle("fill", bx, by, 1.2)
-      love.graphics.setColor(0, 0, 0, 1)
-    end
-    if item.right then
-      Font.draw(item.right, 160 - 8 - Font.width(item.right), y + 8)
-    end
-    if i == self.index then
-      -- hollowIndex: a chosen row keeps the hollow '▷' left behind by
-      -- pokered's PlaceUnfilledArrowMenuCursor (the old man demo's
-      -- auto A-press, home/list_menu.asm:89-91)
-      Font.drawCode((self.swapIndex == i or self.hollowIndex == i)
-                    and Theme.cursorHollow or Theme.cursor, 8, y)
-    end
-    if self.swapIndex == i and i ~= self.index then
-      Font.drawCode(Theme.cursorHollow, 8, y) -- ▷ marks the item being moved
-    end
-  end
-  if self.dialogue then
-    -- money box (DisplayTextBoxID MONEY_BOX, hlcoord 11,0): the amount
-    -- right-aligned on its middle row
-    Font.drawBox(11, 0, 9, 3)
-    love.graphics.setColor(0, 0, 0, 1)
-    local money = ("¥%d"):format(self.money and self.money() or 0)
-    Font.draw(money, 152 - Font.width(money), 8)
-  end
-  if self.dialogue or (self.messageBox and self.footer) then
-    -- standard bottom text box (PrintText); long prompts wrap and keep
-    -- their last two lines, like the GB's scrolled box (#115/#174)
-    Font.drawBox(0, 12, 20, 6)
-    love.graphics.setColor(0, 0, 0, 1)
-    if self.footer then
-      local flat = {}
-      for _, page in ipairs(require("src.render.TextBox").paginate(self.footer)) do
-        for _, line in ipairs(page) do flat[#flat + 1] = line end
-      end
-      local y = 112
-      for i = math.max(1, #flat - 1), #flat do
-        Font.draw(flat[i], 8, y)
-        y = y + 16
+      love.graphics.rectangle("fill", 40, 64, 104, 8)
+
+      -- desenha a versão na nova ordem/posição
+      if self.blue then
+        love.graphics.draw(
+          self.version,
+          love.graphics.newQuad(88, 0, 72, 8, iw, ih),
+          48, 64
+        )
+      else
+        love.graphics.draw(
+          self.version,
+          love.graphics.newQuad(0, 0, 88, 8, iw, ih),
+          40, 64
+        )
       end
     end
-  elseif self.footer then
-    -- bare footer (bag money line, etc.)
-    local flat = {}
-    for _, page in ipairs(require("src.render.TextBox").paginate(self.footer)) do
-      for _, line in ipairs(page) do flat[#flat + 1] = line end
-    end
-    local y = (#flat >= 2) and 120 or 136
-    for i = math.max(1, #flat - 1), #flat do
-      Font.draw(flat[i], 8, y)
-      y = y + 16
-    end
-  end
-  love.graphics.setColor(1, 1, 1, 1)
-  
-  
-end
 
-
---reposiciona o menu de apredizado de golpes novos
-
- local CURSOR = 0xED
-
-function MoveLearnMenu:draw()
-  if not self.selecting then return end
-  -- single-spaced move list box (TryingToLearn: TextBoxBorder at 4,7)
-  -- plus the port's extra CANCEL row
-  Font.drawBox(0, 5, 20, 7)
-  love.graphics.setColor(0, 0, 0, 1)
-  for i, mv in ipairs(self.mon.moves) do
-    Font.draw(self.game.data.moves[mv.id].name, 16, (5 + i) * 8)
-  end
-  Font.draw(Strings("CANCEL"), 16, (6 + #self.mon.moves) * 8)
-  Font.drawCode(CURSOR, 08, (5 + self.index) * 8)
-  -- WhichMoveToForgetText in the bottom dialogue box
-  Font.drawBox(0, 12, 20, 6)
-  Font.draw(Strings("Which move should"), 8, 14 * 8)
-  Font.draw(Strings("be forgotten?"), 8, 16 * 8)
-  love.graphics.setColor(1, 1, 1, 1)
-end
-
-
--- reorganizar Trainer Card
-
-local oldDraw = TrainerCard.draw
-function TrainerCard:draw()
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.rectangle("fill", 0, 0, 160, 144)
-  local save = self.game.save
-
-  -- top card (rows 0-7): NAME / MONEY / TIME, pic upper-right
-  self:frameBox(0, 0, 20, 8)
-  if self.pic then
-    love.graphics.draw(self.pic, 104, 4)
-  end
-  love.graphics.setColor(0, 0, 0, 1)
-  Font.draw(Strings("NAME/%s", save.player.name or "RED"), 16, 12)
-  Font.draw(Strings("DINHEIRO/"), 16, 25)
-  Font.draw(("¥%d"):format(save.money or 0), 48, 33)
-
-  local t = math.floor(save.playTime or 0)
-  Font.draw(Strings("TEMPO/"), 16, 42)
-
-  Font.draw(("%3d:%02d"):format(
-    math.floor(t / 3600),
-    math.floor(t / 60) % 60
-), 48, 50)
-
-  -- the circle-dotted BADGES banner (TrainerInfo_BadgesText)
-  self:frameBox(0, 8, 20, 3)
-  love.graphics.setColor(0, 0, 0, 1)
-  Font.draw(Strings("BADGES"), 40, 73)
-  if self.circle then
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.circle, 32, 72)
-    love.graphics.draw(self.circle, 112, 72)
-    love.graphics.setColor(0, 0, 0, 1)
   end
 
+---yellow
+---------------
+  
 
- -- numbered badge grid (rows 11-17): face by default, badge when owned
-  self:frameBox(0, 11, 20, 7)
-  local badges = Badges.list(self.game.data)
-  for i = 1, #badges do
-    local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
-    local tx, ty = 16 + col * 32, 95 + row * 22
-    -- the extracted sheets cover the eight Kanto slots; a longer badge
-    -- list draws its extra entries unnumbered rather than crashing
-    if self.nums and self.nums.quads[i - 1] then
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(self.nums.img, self.nums.quads[i - 1], tx, ty)
-    end
-    if self.faces and self.faces.quads[i - 1] then
-      love.graphics.setColor(1, 1, 1, 1)
-      local owned = save.inventory[Badges.itemFor(badges[i])]
-      local sheet = owned and self.badges or self.faces
-      love.graphics.draw(sheet.img, sheet.quads[i - 1], tx + 8, ty + 2)
-    end
-  end
-  love.graphics.setColor(1, 1, 1, 1)
+  
+local TitleState = require("src.ui.TitleState")
+local oldDraw = TitleState.draw
+local Font = require("src.render.Font")
+
+TitleState.draw = function(self)
+  oldDraw(self)
+
+local function easeNoOvershoot(t)
+  if t <= 0 then return 0 end
+  if t >= 1 then return 1 end
+
+  local u = t - 1
+  local v = 1 + 2.70158 * u * u * u + 1.70158 * u * u
+
+  return math.min(v, 1)
 end
 
 
+  if self.yellow then
+
+    -- contador da animação
+    self.__testFrame = (self.__testFrame or 0) + 1
+
+    local f = self.__testFrame
+
+    -- começa em Y=-15 e cai até Y=56
+    -- sem ultrapassar nem voltar
+local t = math.min(1, math.max(0, (f - 4) / 15))
+local y = math.floor(-15 + (56 + 15) * easeNoOvershoot(t))
+
+    local text1 = "VERSÃO"
+    local text2 = "AMARELA"
+
+    local x1 = 10
+    local x2 = 104
+
+    local w1 = Font.width(text1)
+    local w2 = Font.width(text2)
+
+    -- fundos brancos
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.rectangle("fill", x1, y, w1, 8)
+    love.graphics.rectangle("fill", x2, y, w2, 8)
+
+    -- textos pretos
+    love.graphics.setColor(0, 0, 0, 1)
+    Font.draw(text1, x1, y)
+    Font.draw(text2, x2, y)
+
+    love.graphics.setColor(1, 1, 1, 1)
+  end
+end
+------------------
+------------------
 end

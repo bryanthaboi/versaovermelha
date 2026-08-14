@@ -1,7 +1,8 @@
 {
   "id": "versaovermelha",
   "name": "VersãoVermelha",
-  "version": "0.2.1 (26/08/07)",
+  "github": "hydhyro/versaovermelha",
+  "version": "0.2.5.1",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
@@ -9,6 +10,7 @@
   "category": "GAMEPLAY",
   "priority": 100,
   "dependencies": [],
+  "permissions": ["engine_internals"],
   "optional_dependencies": [],
   "conflicts": [],
   "description": "Português brasileiro, ripped from the Hyd~Traduções Versão Vermelha v1.3.1 IPS patch"
